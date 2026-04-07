@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invitație Botez</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --sky:#ddeef8;
+  --sky-light:#eef6fc;
+  --sky-mid:#c4dff2;
+  --sky-deep:#a8cce8;
+  --white:#f7fbff;
+  --gold:#c9a96e;
+  --gold-lt:#e8d5a8;
+  --text:#385068;
+  --text-lt:#6a8aaa;
+  --text-mid:#4e6e88;
+  --accent:#6aaed4;
+  --cloud:rgba(255,255,255,0.86);
+}
+
+body{
+  background:var(--sky);
+  font-family:'Raleway',sans-serif;
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ─── ENVELOPE SCREEN ─── */
+#env-screen{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(160deg,#e4f3fc 0%,#cce5f5 45%,#b8d8f0 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:opacity .9s ease,transform .9s ease;
+}
+#env-screen.gone{opacity:0;transform:scale(1.05);pointer-events:none}
+
+.env-float{animation:envfloat 3.2s ease-in-out infinite}
+@keyframes envfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+#env-screen.opening .env-float{animation:none}
+
+.env-flap{transform-origin:50% 0%;transform-box:fill-box;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+#env-screen.opening .env-flap{transform:rotateX(-175deg)}
+
+.env-letter{transition:transform .65s cubic-bezier(.34,1.56,.64,1) .45s}
+#env-screen.opening .env-letter{transform:translateY(-52px)}
+
+.env-cta{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.15rem;color:var(--text-lt);letter-spacing:.08em;
+  margin-top:26px;animation:ctapulse 2s ease-in-out infinite;
+}
+@keyframes ctapulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ─── PAGE ─── */
+#page{display:none;opacity:0;transition:opacity .85s ease}
+#page.visible{display:block}
+#page.fadein{opacity:1}
+
+/* ─── HERO ─── */
+.hero{
+  position:relative;min-height:440px;
+  background:linear-gradient(180deg,#dff1fb 0%,var(--sky) 100%);
+  display:flex;flex-direction:column;align-items:center;
+  padding-bottom:48px;overflow:hidden;
+}
+
+.clouds{position:absolute;top:0;left:0;right:0;height:160px;pointer-events:none;overflow:hidden}
+.cloud{position:absolute;background:var(--cloud);border-radius:60px}
+.cloud::before,.cloud::after{content:'';position:absolute;background:var(--cloud);border-radius:50%}
+.c1{width:120px;height:40px;top:20px;left:-8px}
+.c1::before{width:66px;height:66px;top:-32px;left:14px}
+.c1::after{width:50px;height:50px;top:-22px;left:50px}
+.c2{width:88px;height:32px;top:10px;left:140px}
+.c2::before{width:50px;height:50px;top:-26px;left:10px}
+.c2::after{width:36px;height:36px;top:-16px;left:36px}
+.c3{width:140px;height:46px;top:26px;left:260px}
+.c3::before{width:74px;height:74px;top:-36px;left:16px}
+.c3::after{width:54px;height:54px;top:-24px;left:58px}
+.c4{width:78px;height:28px;top:12px;right:210px}
+.c4::before{width:44px;height:44px;top:-22px;left:8px}
+.c4::after{width:32px;height:32px;top:-14px;left:30px}
+.c5{width:126px;height:42px;top:22px;right:28px}
+.c5::before{width:68px;height:68px;top:-32px;left:14px}
+.c5::after{width:50px;height:50px;top:-22px;left:52px}
+.c6{width:68px;height:26px;top:8px;right:360px}
+.c6::before{width:38px;height:38px;top:-18px;left:8px}
+.c6::after{width:28px;height:28px;top:-12px;left:26px}
+.c7{width:100px;height:34px;top:30px;left:50%;transform:translateX(-50%)}
+.c7::before{width:56px;height:56px;top:-28px;left:12px}
+.c7::after{width:42px;height:42px;top:-18px;left:44px}
+
+.c1,.c3,.c5,.c7{animation:dr 26s ease-in-out infinite alternate}
+.c2,.c4,.c6{animation:dl 32s ease-in-out infinite alternate}
+@keyframes dr{from{transform:translateX(0)}to{transform:translateX(22px)}}
+@keyframes dl{from{transform:translateX(0)}to{transform:translateX(-18px)}}
+.c1{animation-duration:22s}.c3{animation-duration:30s;animation-delay:-9s}
+.c5{animation-duration:18s;animation-delay:-4s}.c7{animation-duration:24s;animation-delay:-6s}
+.c2{animation-duration:28s;animation-delay:-3s}.c4{animation-duration:36s;animation-delay:-14s}
+.c6{animation-duration:20s;animation-delay:-7s}
+
+.teddy{
+  margin-top:100px;position:relative;z-index:2;
+  animation:teddyfloat 4s ease-in-out infinite;
+}
+@keyframes teddyfloat{
+  0%,100%{transform:translateY(0) rotate(-1.5deg)}
+  50%{transform:translateY(-12px) rotate(1.5deg)}
+}
+
+/* ─── GENERIC SECTION ─── */
+section{padding:68px 24px}
+.inner{max-width:640px;margin:0 auto;text-align:center}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .75s ease,transform .75s ease}
+.reveal.in{opacity:1;transform:none}
+
+.soft-div{
+  height:1px;max-width:520px;margin:0 auto;
+  background:linear-gradient(90deg,transparent,rgba(100,160,210,.25),transparent);
+}
+
+/* ─── POEM ─── */
+.poem-section{background:linear-gradient(180deg,var(--sky) 0%,#e6f3fb 100%)}
+.poem-card{
+  background:rgba(255,255,255,.62);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.92);border-radius:26px;
+  padding:46px 42px;
+  box-shadow:0 8px 44px rgba(80,140,200,.11);
+  position:relative;
+}
+.poem-card::before{
+  content:'❝';position:absolute;top:14px;left:20px;
+  font-family:Georgia,serif;font-size:4.5rem;
+  color:var(--gold-lt);line-height:1;pointer-events:none;
+}
+.poem-card::after{
+  content:'❞';position:absolute;bottom:-4px;right:20px;
+  font-family:Georgia,serif;font-size:4.5rem;
+  color:var(--gold-lt);line-height:1;pointer-events:none;
+}
+.poem-text{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.2rem,3.4vw,1.5rem);line-height:2.05;
+  color:var(--text-mid);
+}
+
+/* ─── INVITE ─── */
+.invite-section{background:var(--sky-light);padding:60px 24px 52px}
+.invite-label{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(1.4rem,4vw,2rem);color:var(--text-lt);
+  letter-spacing:.05em;margin-bottom:10px;
+}
+.invite-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.6rem,5vw,2.4rem);
+  color:var(--gold);letter-spacing:.07em;margin-bottom:14px;
+}
+.invite-date{
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(3rem,10vw,5.2rem);line-height:1.05;
+  color:var(--text);
+}
+.invite-day{
+  font-size:.88rem;text-transform:uppercase;letter-spacing:.18em;
+  color:var(--text-lt);font-weight:600;margin-top:10px;
+}
+
+/* ─── COUNTDOWN ─── */
+.countdown-section{
+  background:linear-gradient(135deg,#ddeef8 0%,#cce3f5 100%);
+  padding:60px 24px;
+}
+.cd-title{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.4rem;color:var(--text-lt);margin-bottom:38px;
+}
+.cd-grid{display:flex;justify-content:center;gap:clamp(10px,3vw,22px);flex-wrap:wrap}
+.cd-box{
+  background:rgba(255,255,255,.72);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.95);border-radius:20px;
+  width:clamp(72px,17vw,96px);padding:20px 6px 16px;
+  box-shadow:0 4px 22px rgba(80,150,210,.13);
+  transition:transform .25s;
+}
+.cd-box:hover{transform:translateY(-5px)}
+.cd-num{
+  display:block;
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(2.2rem,7vw,3rem);line-height:1;color:var(--text);
+}
+.cd-lbl{
+  display:block;font-size:.66rem;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--text-lt);font-weight:600;margin-top:8px;
+}
+
+/* ─── EVENT CARDS ─── */
+.events-section{
+  background:linear-gradient(180deg,#e6f3fb 0%,var(--sky) 100%);
+  display:flex;flex-direction:column;align-items:center;gap:34px;
+  padding:64px 24px;
+}
+.ev-card{
+  background:rgba(255,255,255,.7);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.94);border-radius:26px;
+  width:min(560px,100%);padding:42px 38px;
+  box-shadow:0 8px 40px rgba(80,140,200,.11);
+  text-align:center;
+  transition:transform .3s,box-shadow .3s;
+}
+.ev-card:hover{transform:translateY(-6px);box-shadow:0 16px 52px rgba(80,140,200,.18)}
+.ev-icon{margin-bottom:22px}
+.ev-title{
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:1.95rem;color:var(--text);margin-bottom:12px;
+}
+.ev-name{font-size:1.05rem;font-weight:600;color:var(--text-mid);margin-bottom:5px}
+.ev-time{font-size:.9rem;color:var(--text-lt);letter-spacing:.05em;margin-bottom:24px}
+.btn-maps{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 28px;
+  background:linear-gradient(135deg,var(--accent) 0%,#4d96c2 100%);
+  color:#fff;border-radius:50px;text-decoration:none;
+  font-size:.82rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  box-shadow:0 4px 18px rgba(80,150,200,.3);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-maps:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,150,200,.4)}
+
+/* ─── RSVP SECTION ─── */
+.rsvp-section{background:var(--sky-light);padding:72px 24px 80px;text-align:center}
+.rsvp-stars{font-size:1.3rem;letter-spacing:14px;color:var(--gold-lt);margin-bottom:22px}
+.rsvp-msg{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.2rem,3.5vw,1.55rem);line-height:1.9;
+  color:var(--text-mid);max-width:480px;margin:0 auto 38px;
+}
+.rsvp-deadline-txt{
+  font-style:normal;font-weight:600;color:var(--text);
+  border-bottom:2px solid var(--gold-lt);padding-bottom:2px;
+}
+.btn-rsvp{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 42px;
+  background:linear-gradient(135deg,var(--accent) 0%,#4d96c2 100%);
+  color:#fff;border:none;border-radius:50px;cursor:pointer;
+  font-family:'Raleway',sans-serif;font-size:1rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  box-shadow:0 6px 28px rgba(80,150,200,.32);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-rsvp:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(80,150,200,.42)}
+
+/* ─── MODAL ─── */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:900;
+  background:rgba(30,70,110,.38);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:linear-gradient(160deg,#f2f9ff 0%,#e8f4fc 100%);
+  border:1px solid rgba(255,255,255,.92);border-radius:26px;
+  padding:46px 42px;width:min(520px,100%);
+  box-shadow:0 20px 60px rgba(30,90,160,.18);
+  animation:mopin .42s cubic-bezier(.34,1.56,.64,1);
+  position:relative;max-height:92vh;overflow-y:auto;
+}
+@keyframes mopin{from{transform:scale(.78) translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.modal-x{
+  position:absolute;top:16px;right:20px;background:none;border:none;
+  font-size:1.35rem;color:var(--text-lt);cursor:pointer;transition:color .2s;
+}
+.modal-x:hover{color:var(--text)}
+.modal-title{
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:2rem;color:var(--text);text-align:center;margin-bottom:30px;
+}
+
+/* ─── FORM FIELDS ─── */
+.frow{margin-bottom:20px}
+.frow label{
+  display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--text-lt);margin-bottom:6px;
+}
+.frow .form-hint{
+  display:block;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.85rem;color:var(--text-lt);margin-bottom:8px;margin-top:-2px;
+}
+.frow input,.frow textarea{
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:1.5px solid rgba(100,170,220,.4);
+  padding:10px 4px;
+  font-family:'Raleway',sans-serif;font-size:.95rem;color:var(--text);
+  outline:none;transition:border-color .2s;
+}
+.frow input:focus,.frow textarea:focus{
+  border-bottom-color:var(--accent);
+}
+.frow textarea{resize:vertical;min-height:80px}
+
+/* ─── TOGGLE CHIPS ─── */
+.toggle-group{margin-bottom:20px}
+.toggle-group > label{
+  display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--text-lt);margin-bottom:8px;
+}
+.toggle-group .form-hint{
+  display:block;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.85rem;color:var(--text-lt);margin-bottom:10px;margin-top:-4px;
+}
+.toggle-track{
+  display:inline-flex;
+  border:1.5px solid rgba(100,170,220,.35);
+  border-radius:50px;overflow:hidden;
+}
+.toggle-track button{
+  padding:10px 22px;border:none;background:transparent;
+  font-family:'Raleway',sans-serif;font-size:.78rem;font-weight:500;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-lt);cursor:pointer;transition:all .22s ease;
+}
+.toggle-track button.active-yes{
+  background:linear-gradient(135deg,var(--accent),#4d96c2);
+  color:#fff;
+}
+.toggle-track button.active-no{
+  background:linear-gradient(135deg,#e8927a,#c97060);
+  color:#fff;
+}
+
+/* ─── CONDITIONAL BLOCKS ─── */
+.conditional-block{
+  overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .4s ease,opacity .3s ease,margin .3s ease;
+  margin-top:0;
+}
+.conditional-block.shown{max-height:600px;opacity:1;margin-top:4px}
+
+/* ─── DECLINE NOTE ─── */
+#decline-note{
+  background:rgba(232,146,122,.08);
+  border-left:3px solid #e8927a;
+  border-radius:0 10px 10px 0;
+  padding:14px 16px;margin-bottom:16px;display:none;
+}
+#decline-note p{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  color:var(--text-mid);font-size:.95rem;
+}
+
+/* ─── SUBMIT BUTTON ─── */
+.btn-submit{
+  width:100%;padding:15px;margin-top:12px;
+  background:linear-gradient(135deg,var(--accent) 0%,#4d96c2 100%);
+  color:#fff;border:none;border-radius:50px;cursor:pointer;
+  font-family:'Raleway',sans-serif;font-size:.9rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  box-shadow:0 4px 18px rgba(80,150,200,.28);
+  transition:transform .2s,box-shadow .2s,opacity .2s;
+}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,150,200,.38)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+#form-msg{
+  margin-top:16px;text-align:center;
+  font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;
+  color:var(--accent);min-height:22px;
+}
+
+footer{
+  text-align:center;padding:28px;font-size:.74rem;
+  color:var(--text-lt);letter-spacing:.07em;
+  background:linear-gradient(0deg,#cce3f5 0%,var(--sky) 100%);
+}
+
+@media(max-width:500px){
+  .poem-card{padding:32px 20px}
+  .ev-card{padding:32px 20px}
+  .modal{padding:36px 20px}
+  .toggle-track{flex-direction:column;border-radius:16px}
+  .toggle-track button{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ ENVELOPE SCREEN ════════════════════ -->
+<div id="env-screen" onclick="openEnvelope()">
+  <div class="env-float" id="efloat">
+    <svg id="env-svg" viewBox="0 0 340 230" width="min(340px,88vw)"
+         xmlns="http://www.w3.org/2000/svg" overflow="visible">
+      <g class="env-letter">
+        <rect x="70" y="42" width="200" height="118" rx="9"
+              fill="#f7fbff" stroke="#c4dff2" stroke-width="1.5"/>
+        <line x1="94"  y1="74"  x2="246" y2="74"  stroke="#d8edf8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="94"  y1="90"  x2="246" y2="90"  stroke="#d8edf8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="94"  y1="106" x2="220" y2="106" stroke="#d8edf8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="170" y1="120" x2="170" y2="148" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="158" y1="131" x2="182" y2="131" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <rect x="10" y="82" width="320" height="138" rx="14"
+            fill="#e8f3fb" stroke="#a8cce8" stroke-width="2"/>
+      <path d="M10 215 L158 138" stroke="#b8d5ec" stroke-width="1.4" opacity=".6"/>
+      <path d="M330 215 L182 138" stroke="#b8d5ec" stroke-width="1.4" opacity=".6"/>
+      <g class="env-flap">
+        <path d="M10 82 L170 168 L330 82 Z" fill="#d4eaf8" stroke="#a8cce8" stroke-width="2"/>
+      </g>
+      <circle cx="170" cy="82" r="20" fill="#c9a96e" opacity=".92"
+              filter="url(#seal-shadow)"/>
+      <text x="170" y="89" text-anchor="middle" font-size="15" fill="#fff"
+            font-family="Georgia,serif">✦</text>
+      <defs>
+        <filter id="seal-shadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".25"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+  <p class="env-cta">✦ Apasă pentru a deschide invitația ✦</p>
+</div>
+
+<!-- ════════════════════ MAIN PAGE ════════════════════ -->
+<div id="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="cloud c3"></div>
+      <div class="cloud c4"></div>
+      <div class="cloud c5"></div>
+      <div class="cloud c6"></div>
+      <div class="cloud c7"></div>
+    </div>
+    <div class="teddy reveal">
+      <img src="teddy.png" alt="Teddy bear" width="210" style="max-width:58vw; display:block;"/>
+    </div>
+  </section>
+
+  <div class="soft-div"></div>
+
+  <!-- POEM -->
+  <section class="poem-section">
+    <div class="inner reveal">
+      <div class="poem-card">
+        <p class="poem-text" id="poem-text">
+          Nouă luni am așteptat<br/>
+          Și în sfârșit s-a întâmplat:<br/>
+          S-a născut un îngeraș,<br/>
+          Frumușel și drăgălaș.<br/>
+          Și-acum știți ce-o să urmeze:<br/>
+          Nașii o să-l creștineze!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-div"></div>
+
+  <!-- INVITATION -->
+  <section class="invite-section">
+    <div class="inner reveal">
+      <p class="invite-label">Vă invităm la</p>
+      <p class="invite-sub">botezul micuțului nostru</p>
+      <div class="invite-date" id="inv-date">09 mai 2026</div>
+      <p class="invite-day"   id="inv-day">Sâmbătă</p>
+    </div>
+  </section>
+
+  <div class="soft-div"></div>
+
+  <!-- COUNTDOWN -->
+  <section class="countdown-section">
+    <div class="inner reveal">
+      <p class="cd-title">Până la ziua cea mare…</p>
+      <div class="cd-grid">
+        <div class="cd-box"><span class="cd-num" id="cd-d">00</span><span class="cd-lbl">Zile</span></div>
+        <div class="cd-box"><span class="cd-num" id="cd-h">00</span><span class="cd-lbl">Ore</span></div>
+        <div class="cd-box"><span class="cd-num" id="cd-m">00</span><span class="cd-lbl">Minute</span></div>
+        <div class="cd-box"><span class="cd-num" id="cd-s">00</span><span class="cd-lbl">Secunde</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-div"></div>
+
+  <!-- EVENTS -->
+  <section class="events-section">
+
+    <!-- Church -->
+    <div class="ev-card reveal">
+      <div class="ev-icon">
+        <svg viewBox="0 0 84 84" width="66" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="42" cy="42" r="40" fill="rgba(106,174,212,.1)" stroke="rgba(106,174,212,.28)" stroke-width="1.5"/>
+          <rect x="14" y="34" width="24" height="28" rx="3" fill="#ddeef8" stroke="#6aaed4" stroke-width="1.5"/>
+          <rect x="46" y="34" width="24" height="28" rx="3" fill="#ddeef8" stroke="#6aaed4" stroke-width="1.5"/>
+          <line x1="42" y1="34" x2="42" y2="62" stroke="#6aaed4" stroke-width="1.5"/>
+          <line x1="19" y1="42" x2="36" y2="42" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="19" y1="49" x2="36" y2="49" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="19" y1="56" x2="36" y2="56" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="48" y1="42" x2="65" y2="42" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="48" y1="49" x2="65" y2="49" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="48" y1="56" x2="65" y2="56" stroke="#a8cce8" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="42" y1="16" x2="42" y2="30" stroke="#c9a96e" stroke-width="2.8" stroke-linecap="round"/>
+          <line x1="35" y1="21" x2="49" y2="21" stroke="#c9a96e" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ev-title">Ceremonia Religioasă</div>
+      <div class="ev-name" id="church-name">Biserica Glâmbocu Adormirea Maicii Domnului</div>
+      <div class="ev-time" id="church-time">🕙 ora 16:00</div>
+      <a href="https://maps.google.com/?q=adresa+biserica" target="_blank" class="btn-maps" id="church-maps-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" fill="white"/>
+        </svg>
+        Google Maps
+      </a>
+    </div>
+
+    <!-- Restaurant -->
+    <div class="ev-card reveal">
+      <div class="ev-icon">
+        <svg viewBox="0 0 84 84" width="66" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="42" cy="42" r="40" fill="rgba(201,169,110,.1)" stroke="rgba(201,169,110,.28)" stroke-width="1.5"/>
+          <polygon points="28,18 38,18 35,46 31,46" fill="#ddeef8" stroke="#6aaed4" stroke-width="1.3"/>
+          <line x1="33" y1="46" x2="33" y2="58" stroke="#6aaed4" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="27" y1="58" x2="39" y2="58" stroke="#6aaed4" stroke-width="2"   stroke-linecap="round"/>
+          <circle cx="31" cy="34" r="2"   fill="#a8cce8" opacity=".7"/>
+          <circle cx="34" cy="25" r="1.4" fill="#a8cce8" opacity=".6"/>
+          <polygon points="46,18 56,18 53,46 49,46" fill="#ddeef8" stroke="#6aaed4" stroke-width="1.3"/>
+          <line x1="51" y1="46" x2="51" y2="58" stroke="#6aaed4" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="45" y1="58" x2="57" y2="58" stroke="#6aaed4" stroke-width="2"   stroke-linecap="round"/>
+          <circle cx="49" cy="34" r="2"   fill="#a8cce8" opacity=".7"/>
+          <circle cx="52" cy="25" r="1.4" fill="#a8cce8" opacity=".6"/>
+          <line x1="39" y1="16" x2="45" y2="16" stroke="#c9a96e" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="42" y1="12" x2="42" y2="20" stroke="#c9a96e" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ev-title">Petrecerea</div>
+      <div class="ev-name" id="rest-name">Restaurant „La Noi"</div>
+      <div class="ev-time" id="rest-time">🕐 ora 13:00</div>
+      <a href="https://maps.google.com/?q=adresa+restaurant" target="_blank" class="btn-maps" id="rest-maps-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" fill="white"/>
+        </svg>
+        Google Maps
+      </a>
+    </div>
+
+  </section>
+
+  <div class="soft-div"></div>
+
+  <!-- RSVP -->
+  <section class="rsvp-section">
+    <div class="inner reveal">
+      <div class="rsvp-stars">✦ ✦ ✦</div>
+      <p class="rsvp-msg">
+        Vă rugăm să confirmați prezența<br/>
+        până la data de <span class="rsvp-deadline-txt" id="rsvp-dl">01 Mai 2026</span>
+      </p>
+      <button class="btn-rsvp" onclick="openModal()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+          <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="white"/>
+        </svg>
+        Confirmă Prezența
+      </button>
+    </div>
+  </section>
+
+  <footer>09 mai 2026</footer>
+
+</div><!-- #page -->
+
+<!-- ════════════════════ MODAL ════════════════════ -->
+<div class="modal-bg" id="modal-bg" onclick="bgClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-h">
+    <button class="modal-x" onclick="closeModal()" aria-label="Închide">✕</button>
+    <h2 class="modal-title" id="modal-h">Confirmare Prezență</h2>
+
+    <!-- NAME -->
+    <div class="frow">
+      <label for="m-name">Nume și prenume *</label>
+      <span class="form-hint">Prenumele și numele de familie</span>
+      <input id="m-name" type="text" placeholder="ex. Ion Popescu" autocomplete="name"/>
+    </div>
+
+    <!-- ATTENDING TOGGLE -->
+    <div class="toggle-group">
+      <label>Participi?</label>
+      <span class="form-hint">Selectează răspunsul tău</span>
+      <div class="toggle-track">
+        <button id="btn-yes" onclick="setAttending(true)">✓ Da, particip</button>
+        <button id="btn-no"  onclick="setAttending(false)">✗ Nu pot veni</button>
+      </div>
+    </div>
+
+    <!-- DECLINE NOTE -->
+    <div id="decline-note">
+      <p>Ne pare rău că nu poți fi alături de noi. Dacă dorești, lasă-ne un mesaj 💌</p>
+    </div>
+    <div class="conditional-block" id="block-decline">
+      <div class="frow">
+        <label for="m-decline">Mesaj pentru noi</label>
+        <textarea id="m-decline" placeholder="Câteva cuvinte pentru noi…"></textarea>
+      </div>
+    </div>
+
+    <!-- YES FIELDS -->
+    <div class="conditional-block" id="block-yes-fields">
+
+      <!-- PARTNER TOGGLE -->
+      <div class="toggle-group">
+        <label>Vii însoțit(ă)?</label>
+        <div class="toggle-track">
+          <button id="btn-partner-yes" onclick="setPartner(true)">Da</button>
+          <button id="btn-partner-no"  onclick="setPartner(false)">Nu</button>
+        </div>
+      </div>
+      <div class="conditional-block" id="block-partner-name">
+        <div class="frow">
+          <label for="m-partner">Numele însoțitorului/însoțitoarei</label>
+          <span class="form-hint">Prenumele și numele de familie</span>
+          <input type="text" id="m-partner" placeholder="ex. Maria Popescu"/>
+        </div>
+      </div>
+
+      <!-- KIDS TOGGLE -->
+      <div class="toggle-group">
+        <label>Vii cu copii?</label>
+        <div class="toggle-track">
+          <button id="btn-kids-yes" onclick="setKids(true)">Da</button>
+          <button id="btn-kids-no"  onclick="setKids(false)">Nu</button>
+        </div>
+      </div>
+      <div class="conditional-block" id="block-kids-count">
+        <div class="frow">
+          <label for="m-kids">Câți copii?</label>
+          <input type="number" id="m-kids" placeholder="ex. 2" min="1" max="10"/>
+        </div>
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="frow">
+        <label for="m-message">Mesaj (opțional)</label>
+        <textarea id="m-message" placeholder="Câteva cuvinte pentru noi…"></textarea>
+      </div>
+
+    </div><!-- /block-yes-fields -->
+
+    <button class="btn-submit" id="rsvp-btn" onclick="sendRSVP()">Trimite Confirmarea ✦</button>
+    <p id="form-msg"></p>
+
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   ✏️  CONFIGURARE — editează valorile tale
+══════════════════════════════════════════ */
+const CFG = {
+  eventDate    : new Date(2026, 4, 9, 10, 0, 0),
+  displayDate  : '09 Mai 2026',
+  displayDay   : 'Sâmbătă',
+  rsvpDeadline : '01 Mai 2026',
+
+  churchName   : 'Biserica "Adormirea Maicii Domnului", Glâmboc',
+  churchTime   : '🕙 ora 16:00',
+  churchMaps   : 'https://www.google.com/maps/place/Biserica+Gl%C3%A2mbocu+Adormirea+Maicii+Domnului/@44.8887165,24.7726945,480m/data=!3m1!1e3!4m6!3m5!1s0x40b2bbf59e36e5c3:0x13b7cd8f678079a1!8m2!3d44.8877828!4d24.7941453!16s%2Fg%2F11fks7wkyk?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D',
+  restName     : 'Restaurant Hanul Valea Ursului',
+  restTime     : '🕐 ora 19:00',
+  restMaps     : 'https://www.google.com/maps/place/Pensiunea+Valea+Ursului/@44.8871504,24.7795098,241m/data=!3m1!1e3!4m17!1m7!3m6!1s0x40b2bbf59e36e5c3:0x13b7cd8f678079a1!2sBiserica+Gl%C3%A2mbocu+Adormirea+Maicii+Domnului!8m2!3d44.8877828!4d24.7941453!16s%2Fg%2F11fks7wkyk!3m8!1s0x40b2ba7c98f1631f:0xe00da9f84c21e73e!5m2!4m1!1i2!8m2!3d44.8872342!4d24.779802!16s%2Fg%2F11b70h_n2h?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D',
+
+  /* ✏️ EmailJS — înlocuiește cu datele tale de pe emailjs.com */
+  EMAILJS_PUBLIC_KEY  : 'Ys9f5fZ4fQ0en1EOW',
+  EMAILJS_SERVICE_ID  : 'service_31egr5s',
+  EMAILJS_TEMPLATE_ID : 'template_672v69c',
+};
+
+/* ── Apply config ── */
+document.getElementById('inv-date').textContent    = CFG.displayDate;
+document.getElementById('inv-day').textContent     = CFG.displayDay;
+document.getElementById('rsvp-dl').textContent     = CFG.rsvpDeadline;
+document.getElementById('church-name').textContent = CFG.churchName;
+document.getElementById('church-time').textContent = CFG.churchTime;
+document.getElementById('church-maps-btn').href    = CFG.churchMaps;
+document.getElementById('rest-name').textContent   = CFG.restName;
+document.getElementById('rest-time').textContent   = CFG.restTime;
+document.getElementById('rest-maps-btn').href      = CFG.restMaps;
+
+/* ── Init EmailJS ── */
+emailjs.init(CFG.EMAILJS_PUBLIC_KEY);
+
+/* ── Envelope ── */
+let opened = false;
+function openEnvelope() {
+  if (opened) return; opened = true;
+  document.getElementById('efloat').style.animation = 'none';
+  const screen = document.getElementById('env-screen');
+  screen.classList.add('opening');
+  setTimeout(() => {
+    screen.classList.add('gone');
+    const page = document.getElementById('page');
+    page.classList.add('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => page.classList.add('fadein')));
+    initReveal();
+    tick(); setInterval(tick, 1000);
+  }, 950);
+}
+
+/* ── Countdown ── */
+function pad(n){ return String(n).padStart(2,'0'); }
+function tick() {
+  const diff = CFG.eventDate - Date.now();
+  if (diff <= 0) {
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent = '00');
+    return;
+  }
+  document.getElementById('cd-d').textContent = pad(Math.floor(diff/86400000));
+  document.getElementById('cd-h').textContent = pad(Math.floor(diff%86400000/3600000));
+  document.getElementById('cd-m').textContent = pad(Math.floor(diff%3600000/60000));
+  document.getElementById('cd-s').textContent = pad(Math.floor(diff%60000/1000));
+}
+
+/* ── Scroll reveal ── */
+function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const io  = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+  setTimeout(() => {
+    els.forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in');
+    });
+  }, 80);
+}
+
+/* ── Modal ── */
+function openModal()  { document.getElementById('modal-bg').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); document.body.style.overflow=''; }
+function bgClick(e)   { if (e.target === document.getElementById('modal-bg')) closeModal(); }
+
+/* ── RSVP form state ── */
+let attending = null, hasPartner = null, hasKids = null;
+
+function setAttending(val) {
+  attending = val;
+  document.getElementById('btn-yes').className = val ? 'active-yes' : '';
+  document.getElementById('btn-no').className  = val ? '' : 'active-no';
+  toggleBlock('block-yes-fields', val);
+  toggleBlock('block-decline', !val);
+  document.getElementById('decline-note').style.display = val ? 'none' : 'block';
+}
+function setPartner(val) {
+  hasPartner = val;
+  document.getElementById('btn-partner-yes').className = val ? 'active-yes' : '';
+  document.getElementById('btn-partner-no').className  = val ? '' : 'active-no';
+  toggleBlock('block-partner-name', val);
+}
+function setKids(val) {
+  hasKids = val;
+  document.getElementById('btn-kids-yes').className = val ? 'active-yes' : '';
+  document.getElementById('btn-kids-no').className  = val ? '' : 'active-no';
+  toggleBlock('block-kids-count', val);
+}
+function toggleBlock(id, show) {
+  document.getElementById(id).classList.toggle('shown', show);
+}
+
+/* ── Send via EmailJS ── */
+function sendRSVP() {
+  const name   = document.getElementById('m-name').value.trim();
+  const msgEl  = document.getElementById('form-msg');
+  const btn    = document.getElementById('rsvp-btn');
+
+  msgEl.textContent = '';
+
+  if (!name) {
+    msgEl.style.color = '#e8927a';
+    msgEl.textContent = 'Vă rugăm să introduceți numele.';
+    return;
+  }
+  if (attending === null) {
+    msgEl.style.color = '#e8927a';
+    msgEl.textContent = 'Vă rugăm să selectați dacă participați.';
+    return;
+  }
+  if (attending && hasPartner === true && !document.getElementById('m-partner').value.trim()) {
+    msgEl.style.color = '#e8927a';
+    msgEl.textContent = 'Vă rugăm să introduceți numele însoțitorului.';
+    return;
+  }
+  if (attending && hasKids === true && !document.getElementById('m-kids').value.trim()) {
+    msgEl.style.color = '#e8927a';
+    msgEl.textContent = 'Vă rugăm să introduceți numărul de copii.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Se trimite…';
+
+  emailjs.send(CFG.EMAILJS_SERVICE_ID, CFG.EMAILJS_TEMPLATE_ID, {
+    guest_name : name,
+    attending  : attending ? 'Da — participă' : 'Nu — nu poate participa',
+    partner    : attending && hasPartner ? (document.getElementById('m-partner').value || '—') : 'N/A',
+    kids       : attending && hasKids    ? (document.getElementById('m-kids').value    || '—') : 'N/A',
+    message    : attending
+                   ? (document.getElementById('m-message').value  || '—')
+                   : (document.getElementById('m-decline').value  || '—'),
+  }).then(() => {
+    msgEl.style.color = 'var(--accent)';
+    msgEl.textContent = attending
+      ? '✓ Mulțumim! Abia așteptăm să te vedem! 🎉'
+      : '✓ Ne pare rău că nu poți veni. Mulțumim că ne-ai anunțat!';
+    btn.textContent = 'Trimis ✓';
+    setTimeout(() => {
+      closeModal();
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Trimite Confirmarea ✦';
+        msgEl.textContent = '';
+        document.getElementById('m-name').value = '';
+        document.getElementById('m-partner').value = '';
+        document.getElementById('m-kids').value = '';
+        document.getElementById('m-message').value = '';
+        document.getElementById('m-decline').value = '';
+        attending = null; hasPartner = null; hasKids = null;
+        ['btn-yes','btn-no','btn-partner-yes','btn-partner-no','btn-kids-yes','btn-kids-no']
+          .forEach(id => document.getElementById(id).className = '');
+        ['block-yes-fields','block-decline','block-partner-name','block-kids-count']
+          .forEach(id => document.getElementById(id).classList.remove('shown'));
+        document.getElementById('decline-note').style.display = 'none';
+      }, 400);
+    }, 3200);
+  }).catch(() => {
+    msgEl.style.color = '#c0392b';
+    msgEl.textContent = 'Ceva nu a funcționat. Vă rugăm să încercați din nou.';
+    btn.disabled = false;
+    btn.textContent = 'Trimite Confirmarea ✦';
+  });
+}
+</script>
+</body>
+</html>
