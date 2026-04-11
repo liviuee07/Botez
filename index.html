@@ -259,6 +259,20 @@ section{padding:68px 24px}
 }
 .btn-rsvp:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(80,150,200,.42)}
 
+/* ─── MUSIC BUTTON ─── */
+#music-btn{
+  position:fixed;bottom:22px;right:22px;z-index:800;
+  width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),#4d96c2);
+  color:#fff;font-size:1.2rem;
+  box-shadow:0 4px 18px rgba(80,150,200,.35);
+  display:none;
+  align-items:center;justify-content:center;
+  transition:transform .2s,box-shadow .2s;
+}
+#music-btn:hover{transform:translateY(-2px) scale(1.08);box-shadow:0 8px 26px rgba(80,150,200,.45)}
+#music-btn.visible{display:flex}
+
 /* ─── MODAL ─── */
 .modal-bg{
   display:none;position:fixed;inset:0;z-index:900;
@@ -431,6 +445,9 @@ footer{
   </div>
   <p class="env-cta">✦ Apasă pentru a deschide invitația ✦</p>
 </div>
+
+<!-- ════════════════════ MUSIC BUTTON ════════════════════ -->
+<button id="music-btn" onclick="toggleMusic()" aria-label="Muzică">🎵</button>
 
 <!-- ════════════════════ MAIN PAGE ════════════════════ -->
 <div id="page">
@@ -656,7 +673,7 @@ const CFG = {
   churchMaps   : 'https://www.google.com/maps/place/Biserica+Gl%C3%A2mbocu+Adormirea+Maicii+Domnului/@44.8887165,24.7726945,480m/data=!3m1!1e3!4m6!3m5!1s0x40b2bbf59e36e5c3:0x13b7cd8f678079a1!8m2!3d44.8877828!4d24.7941453!16s%2Fg%2F11fks7wkyk?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D',
   restName     : 'Restaurant "Hanul Valea Ursului"',
   restTime     : '🕐 ora 19:00',
-  restMaps     : 'https://www.google.com/maps/place/Pensiunea+Valea+Ursului/@44.8871504,24.7795098,241m/data=!3m1!1e3!4m17!1m7!3m6!1s0x40b2bbf59e36e5c3:0x13b7cd8f678079a1!2sBiserica+Gl%C3%A2mbocu+Adormirea+Maicii+Domnului!8m2!3d44.8877828!4d24.7941453!16s%2Fg%2F11fks7wkyk!3m8!1s0x40b2ba7c98f1631f:0xe00da9f84c21e73e!5m2!4m1!1i2!8m2!3d44.8872342!4d24.779802!16s%2Fg%2F11b70h_n2h?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D',
+  restMaps     : 'https://www.google.com/maps/place/Pensiunea+Valea+Ursului/@44.8872356,24.7788423,241m/data=!3m2!1e3!4b1!4m9!3m8!1s0x40b2ba7c98f1631f:0xe00da9f84c21e73e!5m2!4m1!1i2!8m2!3d44.8872342!4d24.779802!16s%2Fg%2F11b70h_n2h?entry=ttu&g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D',
 
   /* ✏️ EmailJS — înlocuiește cu datele tale de pe emailjs.com */
   EMAILJS_PUBLIC_KEY  : 'Ys9f5fZ4fQ0en1EOW',
@@ -678,6 +695,25 @@ document.getElementById('rest-maps-btn').href      = CFG.restMaps;
 /* ── Init EmailJS ── */
 emailjs.init(CFG.EMAILJS_PUBLIC_KEY);
 
+/* ── Music ── */
+const bgMusic = new Audio('song.mp3');
+bgMusic.loop   = true;
+bgMusic.volume = 0.5;
+let musicPlaying = false;
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (musicPlaying) {
+    bgMusic.pause();
+    btn.textContent = '🎵';
+    musicPlaying = false;
+  } else {
+    bgMusic.play().catch(() => {});
+    btn.textContent = '🔇';
+    musicPlaying = true;
+  }
+}
+
 /* ── Envelope ── */
 let opened = false;
 function openEnvelope() {
@@ -685,11 +721,18 @@ function openEnvelope() {
   document.getElementById('efloat').style.animation = 'none';
   const screen = document.getElementById('env-screen');
   screen.classList.add('opening');
+
+  /* ── Start music on envelope click ── */
+  bgMusic.play().catch(() => {});
+  musicPlaying = true;
+  document.getElementById('music-btn').textContent = '🔇';
+
   setTimeout(() => {
     screen.classList.add('gone');
     const page = document.getElementById('page');
     page.classList.add('visible');
     requestAnimationFrame(() => requestAnimationFrame(() => page.classList.add('fadein')));
+    document.getElementById('music-btn').classList.add('visible');
     initReveal();
     tick(); setInterval(tick, 1000);
   }, 950);
