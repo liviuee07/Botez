@@ -260,18 +260,21 @@ section{padding:68px 24px}
 .btn-rsvp:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(80,150,200,.42)}
 
 /* ─── MUSIC BUTTON ─── */
-#music-btn{
-  position:fixed;bottom:22px;right:22px;z-index:800;
-  width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
-  background:linear-gradient(135deg,var(--accent),#4d96c2);
-  color:#fff;font-size:1.2rem;
-  box-shadow:0 4px 18px rgba(80,150,200,.35);
-  display:none;
-  align-items:center;justify-content:center;
-  transition:transform .2s,box-shadow .2s;
+#music-btn {
+  position: fixed; bottom: 22px; right: 22px; z-index: 800;
+  background: #fff;        /* was var(--text) */
+  color: var(--accent);    /* was var(--gold-lt) */
+  border: 1px solid var(--white); border-radius: 50px;
+  padding: 10px 20px;
+  font-family: 'Raleway', sans-serif; font-size: 0.72rem;
+  font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; display: none; align-items: center; gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(56,80,104,0.25);
 }
-#music-btn:hover{transform:translateY(-2px) scale(1.08);box-shadow:0 8px 26px rgba(80,150,200,.45)}
-#music-btn.visible{display:flex}
+#music-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+#music-btn .note { font-size: 1rem; }
+#music-btn.visible { display: flex; }
 
 /* ─── MODAL ─── */
 .modal-bg{
@@ -447,7 +450,10 @@ footer{
 </div>
 
 <!-- ════════════════════ MUSIC BUTTON ════════════════════ -->
-<button id="music-btn" onclick="toggleMusic()" aria-label="Muzică">🎵</button>
+<button id="music-btn" onclick="toggleMusic()" aria-label="Muzică">
+  <span class="note" id="music-icon">♪</span>
+  <span id="music-label"> </span>
+</button>
 
 <!-- ════════════════════ MAIN PAGE ════════════════════ -->
 <div id="page">
@@ -702,14 +708,13 @@ bgMusic.volume = 0.5;
 let musicPlaying = false;
 
 function toggleMusic() {
-  const btn = document.getElementById('music-btn');
   if (musicPlaying) {
     bgMusic.pause();
-    btn.textContent = '🎵';
+    document.getElementById('music-icon').textContent = '♪';
     musicPlaying = false;
   } else {
     bgMusic.play().catch(() => {});
-    btn.textContent = '🔇';
+    document.getElementById('music-icon').textContent = '♫';
     musicPlaying = true;
   }
 }
@@ -725,7 +730,7 @@ function openEnvelope() {
   /* ── Start music on envelope click ── */
   bgMusic.play().catch(() => {});
   musicPlaying = true;
-  document.getElementById('music-btn').textContent = '🔇';
+  document.getElementById('music-icon').textContent = '♫';
 
   setTimeout(() => {
     screen.classList.add('gone');
